@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>प्रश्न निर्माण — संस्कृत क्विज़</title>
+<style>
+:root{--bg:#f5f7ff;--card:#fff;--text:#172033;--muted:#667085;--accent:#635bff;--border:#e4e7ec;--gold:#f59e0b}
+*{box-sizing:border-box}
+body{margin:0;background:#eef2ff;font-family:system-ui,"Noto Sans Devanagari",sans-serif;color:var(--text);overflow-x:hidden}
+.container{max-width:920px;margin:auto;padding:20px 16px 60px}
+.hero{text-align:center;padding:15px}.hero h1{font-size:clamp(34px,8vw,56px);margin:0}.hero p{color:var(--muted);font-size:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px;margin:14px 0;box-shadow:0 12px 35px #0000000c}
+.input{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:13px;font-size:17px;margin:7px 0 14px;outline:none}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #635bff18}
+.btn{border:0;border-radius:14px;padding:14px 20px;font-size:16px;font-weight:800;cursor:pointer;background:var(--accent);color:white}
+.start-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}@media(max-width:650px){.start-grid{grid-template-columns:1fr}}
+.instructions li{margin:8px 0}.welcome{text-align:center;font-weight:800;color:var(--accent);margin:5px 0 15px}
+.grid{display:grid;grid-template-columns:1fr 280px;gap:14px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.stats{display:flex;justify-content:space-between}.label{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.number{font-size:32px;font-weight:900}.timer{font-size:32px;font-weight:900}
+.progress{height:9px;background:#edf0f5;border-radius:20px;margin:15px 0;overflow:hidden}.progress div{height:100%;width:0;background:var(--accent);transition:.25s}
+.question{font-size:22px;font-weight:800;line-height:1.55;margin:18px 0}.sentence{font-size:15px;color:var(--muted);margin-bottom:7px}
+.options{display:grid;gap:11px}.option{border-radius:13px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer;background:#f8f9fc;border:1px solid var(--border);text-align:left;color:var(--text)}
+.option:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}.option.correct{border:3px solid #16a34a;background:#ecfdf3}.option.wrong{border:3px solid #dc2626;background:#fef2f2}
+.rank{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}.hidden{display:none}
+.result{text-align:center}.final{font-size:56px;font-weight:900}.medal{font-size:55px}
+.confetti{position:fixed;top:-15px;width:9px;height:15px;z-index:9999;pointer-events:none;animation:fall 1.4s linear forwards}
+@keyframes fall{to{transform:translate3d(var(--x),105vh,0) rotate(720deg);opacity:0}}
+.candle-stage{display:flex;justify-content:center;gap:16px;height:0;position:relative;z-index:4}
+.candle{font-size:44px;animation:pop .7s ease-out both}
+@keyframes pop{0%{transform:scale(0) translateY(20px)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.celebrate{animation:pulse .55s ease}.celebrate-box{border:2px solid var(--gold);box-shadow:0 0 30px #f59e0b35}
+@keyframes pulse{50%{transform:scale(1.025)}}
+.small-note{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="hero">
+<p style="margin:0 0 4px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#635bff">SANSKRIT QUIZ</p>
+<h1>प्रश्न निर्माण</h1>
+<p>ज्ञानम् • वेगः • विजयः</p>
+</div>
+
+<section id="start" class="card">
+<h2>🎓 विद्यार्थी विवरण</h2>
+<p class="small-note">क्विज़ आरम्भ करने से पूर्व अपना नाम और कक्षा लिखें।</p>
+<div class="start-grid">
+<div><label>आपका नाम</label><input id="studentName" class="input" placeholder="अपना नाम लिखें"></div>
+<div><label>कक्षा</label><input id="studentClass" class="input" placeholder="जैसे 8-A"></div>
+<div><label>दूसरे विद्यार्थी का नाम</label><input id="student2" class="input" placeholder="विद्यार्थी 2"></div>
+<div><label>तीसरे विद्यार्थी का नाम</label><input id="student3" class="input" placeholder="विद्यार्थी 3"></div>
+<div><label>चौथे विद्यार्थी का नाम</label><input id="student4" class="input" placeholder="विद्यार्थी 4"></div>
+</div>
+<h2>📜 निर्देशाः</h2>
+<ol class="instructions">
+<li>वाक्यं सावधानतया पठित्वा उचितं प्रश्नं चिनुत।</li>
+<li>प्रत्येकस्य प्रश्नस्य उत्तराय ३० सेकण्ड् समयः अस्ति।</li>
+<li>सम्यगुत्तरस्य १० अङ्काः प्राप्यन्ते।</li>
+<li>सही उत्तर देते ही 🎉 शानदार confetti celebration होगा!</li>
+<li>अन्ते अङ्कतालिकायां परिणामं पश्यत।</li>
+</ol>
+<button id="startBtn" class="btn">🚀 क्विज़ प्रारभताम्</button>
+</section>
+
+<section id="game" class="hidden">
+<div id="welcome" class="welcome"></div>
+<div class="grid">
+<main id="questionCard" class="card">
+<div class="stats">
+<div><div class="label">अङ्काः</div><div id="score" class="number">0</div></div>
+<div style="text-align:right"><div class="label">समयः</div><div id="timer" class="timer">30</div></div>
+</div>
+<div class="progress"><div id="bar"></div></div>
+<div id="counter" class="label"></div>
+<div id="question" class="question"></div>
+<div id="options" class="options"></div>
+</main>
+<aside class="card">
+<div class="label">अङ्कतालिका</div>
+<div class="rank"><span id="playerRankName">भवान्</span><b id="you">0</b></div>
+<div class="rank"><span id="player2Name">विद्यार्थी 2</span><b>50</b></div>
+<div class="rank"><span id="player3Name">विद्यार्थी 3</span><b>40</b></div>
+<div class="rank"><span id="player4Name">विद्यार्थी 4</span><b>30</b></div>
+</aside>
+</div>
+</section>
+
+<section id="result" class="card result hidden">
+<div class="medal">🏆</div>
+<div class="label">परिणामः</div>
+<h2 id="resultName"></h2>
+<p id="resultClass"></p>
+<div id="final" class="final">0 / 80</div>
+<p id="message"></p>
+<button id="restart" class="btn">🔄 पुनः प्रयतताम्</button>
+</section>
+</div>
+
+<script>
+const questions=[
+{sentence:"रामः विद्यालयं गच्छति।",question:"विद्यालयं कः गच्छति?",options:["रामः","सीता","बालकः","मोहनः"],answer:"रामः"},
+{sentence:"सीता उद्याने क्रीडति।",question:"उद्याने का क्रीडति?",options:["सीता","गीता","रमा","बालिका"],answer:"सीता"},
+{sentence:"बालकः पुस्तकं पठति।",question:"बालकः किं पठति?",options:["पुस्तकम्","फलम्","पत्रम्","गीताम्"],answer:"पुस्तकम्"},
+{sentence:"मोहनः प्रातः विद्यालयं गच्छति।",question:"मोहनः कदा विद्यालयं गच्छति?",options:["प्रातः","सायम्","अद्य","श्वः"],answer:"प्रातः"},
+{sentence:"पक्षी वृक्षे उपविशति।",question:"पक्षी कुत्र उपविशति?",options:["वृक्षे","गृहे","उद्याने","आकाशे"],answer:"वृक्षे"},
+{sentence:"बालिका शीघ्रं धावति।",question:"बालिका कथं धावति?",options:["शीघ्रम्","मन्दम्","प्रातः","कुत्र"],answer:"शीघ्रम्"},
+{sentence:"रामः फलम् खादति।",question:"रामः किं खादति?",options:["फलम्","जलम्","दुग्धम्","अन्नम्"],answer:"फलम्"},
+{sentence:"अध्यापकः कक्षायां पाठं पाठयति।",question:"अध्यापकः कुत्र पाठं पाठयति?",options:["कक्षायाम्","गृहे","उद्याने","विद्यालयात्"],answer:"कक्षायाम्"}
+];
+
+let index=0,score=0,time=30,timer=null,locked=false,studentName="",studentClass="",otherStudents=[];
+const $=id=>document.getElementById(id);
+
+function confetti(){
+ for(let i=0;i<75;i++){
+   const c=document.createElement("span");c.className="confetti";
+   c.style.left=Math.random()*100+"vw";
+   c.style.setProperty("--x",(Math.random()*260-130)+"px");
+   c.style.animationDelay=(Math.random()*.35)+"s";
+   c.style.transform="rotate("+Math.random()*360+"deg)";
+   c.style.background=["#635bff","#f59e0b","#ef4444","#10b981","#ec4899","#3b82f6"][Math.floor(Math.random()*6)];
+   document.body.appendChild(c);
+   setTimeout(()=>c.remove(),1800);
+ }
+}
+function candleCelebration(){
+ const stage=document.createElement("div");stage.className="candle-stage";
+ ["🕯️","🎂","🕯️"].forEach((x,i)=>{
+   const s=document.createElement("span");s.className="candle";s.textContent=x;s.style.animationDelay=i*.12+"s";stage.appendChild(s);
+ });
+ document.body.appendChild(stage);setTimeout(()=>stage.remove(),1300);
+}
+function showQuestion(){
+ if(index>=questions.length){finish();return}
+ locked=false;const q=questions[index];
+ $("counter").textContent=`प्रश्नः ${index+1} / ${questions.length}`;
+ $("question").innerHTML=`<div class="sentence">वाक्यम्: ${q.sentence}</div>${q.question}`;
+ $("options").innerHTML="";
+ q.options.forEach(opt=>{
+   const b=document.createElement("button");b.className="option";b.textContent=opt;
+   b.onclick=()=>answer(opt,b);$("options").appendChild(b);
+ });
+ $("bar").style.width=(index/questions.length*100)+"%";
+ time=30;$("timer").textContent=time;clearInterval(timer);
+ timer=setInterval(()=>{time--;$("timer").textContent=time;if(time<=0){clearInterval(timer);index++;showQuestion()}},1000);
+}
+function answer(opt,button){
+ if(locked)return;locked=true;clearInterval(timer);
+ document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+ if(opt===questions[index].answer){
+   score+=10;button.classList.add("correct");$("questionCard").classList.add("celebrate","celebrate-box");
+   confetti();candleCelebration();setTimeout(()=>$("questionCard").classList.remove("celebrate","celebrate-box"),700);
+ }else{
+   button.classList.add("wrong");
+   document.querySelectorAll(".option").forEach(b=>{if(b.textContent===questions[index].answer)b.classList.add("correct")});
+ }
+ $("score").textContent=score;$("you").textContent=score;
+ setTimeout(()=>{index++;showQuestion()},850);
+}
+function finish(){
+ clearInterval(timer);$("game").classList.add("hidden");$("result").classList.remove("hidden");
+ $("resultName").textContent="🌟 "+studentName;
+ $("resultClass").textContent="कक्षा: "+studentClass;
+ $("final").textContent=`${score} / 80`;
+ $("message").textContent=score>=70?"अति उत्तमम्! भवतः प्रश्न-निर्माण-कौशलम् उत्कृष्टम्।":score>=50?"साधु! भवतः अभ्यासः उत्तमः अस्ति।":"अभ्यासं कुरुत। पुनः प्रयत्नं निश्चयेन सफलं भविष्यति।";
+ confetti();candleCelebration();
+}
+$("startBtn").onclick=()=>{
+ studentName=$("studentName").value.trim();studentClass=$("studentClass").value.trim();
+ otherStudents=[
+   $("student2").value.trim()||"विद्यार्थी 2",
+   $("student3").value.trim()||"विद्यार्थी 3",
+   $("student4").value.trim()||"विद्यार्थी 4"
+ ];
+ if(!studentName){alert("कृपया अपना नाम लिखें।");$("studentName").focus();return}
+ if(!studentClass){alert("कृपया अपनी कक्षा लिखें।");$("studentClass").focus();return}
+ $("playerRankName").textContent=studentName;
+ $("player2Name").textContent=otherStudents[0];
+ $("player3Name").textContent=otherStudents[1];
+ $("player4Name").textContent=otherStudents[2];
+ $("welcome").textContent=`स्वागतम्, ${studentName}! 🎓`;
+ $("start").classList.add("hidden");$("game").classList.remove("hidden");showQuestion();
+};
+$("restart").onclick=()=>{
+ index=0;score=0;$("score").textContent=0;$("you").textContent=0;
+ $("result").classList.add("hidden");$("start").classList.remove("hidden");
+};
+</script>
+</body>
+</html>
